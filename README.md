@@ -6,12 +6,19 @@ This is a tool I'm working on for organizing my large inventory of Magic the Gat
 I figured this might be helpful for other people. I'll be building this with CI/CD on my home server for releases, but for now, you'll need some setup for this to work in development.
 
 Installation
--------
+---
 
-#### Requirements
-
-**Electron**: `npm install -g electron@2.0.5`
-
-`cd` into the directory and run `npm install`
+After cloning,
+`cd MtG-Inventory && npm install`
 
 Then you can simply start the application by running `npm start dev`
+
+Building
+---
+
+`electron-packager` is installed as a dev dependency, and a build can be created for your current platform by running `npm run build-dev`. A build can be created for all platforms with `npm run build-all`.
+
+Usage
+---
+
+TODO;
