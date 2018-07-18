@@ -10,7 +10,9 @@
     "react": "^16.4.1",
     "react-bootstrap": "^0.32.1",
     "react-bootstrap-table-next": "^0.1.15",
+    "react-bootstrap-table2-overlay": "^0.1.2",
     "react-dom": "^16.4.1",
+    "react-router-bootstrap": "^0.24.4",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4"
   },
@@ -27,6 +29,7 @@
   "scripts": {
     "start": "cross-env BROWSER=none PORT=$npm_package_config_port react-scripts start",
     "electron": "electron .",
+    "dev-tools": "cross-env TOOLS=true nf start",
     "dev": "nf start",
     "build-all": "electron-packager ./ MtGInventory --all --out='./build'",
     "build-dev": "electron-packager ./ MtGInventory --out='./build'",

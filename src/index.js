@@ -4,7 +4,7 @@ import {
   BrowserRouter,
   Route
 } from 'react-router-dom'
-import {Nav, Home, Sets, Cards} from './components/Components'
+import {TopNav, Home, Sets, Cards} from './components/Components'
 
 // I'm just learning how this works here. Never used NeDB before.
 var Datastore = require('nedb');
@@ -39,7 +39,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Nav />
+        <TopNav />
         <Route exact path="/" component={Home}/>
         <Route path="/sets" component={Sets}/>
         <Route path="/cards" component={Cards}/>
