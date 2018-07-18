@@ -1,6 +1,8 @@
 const {app, BrowserWindow} = require('electron'),
       url = require("url"),
-      path = require("path");
+      path = require("path"),
+      process = require("process"),
+      tools = process.env.TOOLS || false;
 
 let win = null;
 
@@ -16,6 +18,10 @@ function createWindow() {
     slashes: true
   });
   win.loadURL(startUrl);
+
+  if (tools) {
+    win.toggleDevTools();
+  }
 
   win.once('ready-to-show', () => {
     win.show()

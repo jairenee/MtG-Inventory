@@ -1,14 +1,13 @@
 import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next'
+import { Filter, SetList } from './Filter'
 
-let DropdownButton = require('react-bootstrap').DropdownButton,
-    MenuItem = require('react-bootstrap').MenuItem,
-    crud = require("../crud");
+let crud = require("../crud");
 
 export class Sets extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {initialData: null, data: null, filter: "Name"};
+        this.state = {initialData: null, data: [], filter: "Name"};
     
         this.filterList = this.filterList.bind(this);
         this.filterListSets = this.filterListSets.bind(this);
@@ -68,6 +67,16 @@ export class Sets extends React.Component {
         }
         this.setState({initialData: sets, data: sets})
     }
+
+    noData() {
+        return (
+            <div className="row">
+                <div className="loading-img col-sm-6 col-sm-offset-3">
+                    <img className="img-responsive center-block" alt="Loading" src="loading.gif"></img>
+                </div>
+            </div>
+        )
+    }
   
     render() {
         const columns = [{
@@ -86,35 +95,37 @@ export class Sets extends React.Component {
             dataField: 'release',
             text: 'Release Date'
         }];
-    
+
+        let results;
+
         if (this.state.data) {
-            return (
-            <div>
-                <form>
-                <div className="input-group">
-                    <div className="input-group-btn">
-                    <DropdownButton
-                        bsStyle="default"
-                        title={this.state.filter}
-                        id={`dropdown-basic`}
-                    >
-                        <MenuItem eventKey="Name" onSelect={this.dropdownSelected}>Name</MenuItem>
-                        <MenuItem eventKey="Code" onSelect={this.dropdownSelected}>Code</MenuItem>
-                        <MenuItem eventKey="Type" onSelect={this.dropdownSelected}>Type</MenuItem>
-                    </DropdownButton>
-                    </div>
-                    <input type="text" className="form-control form-control-lg" placeholder="Filter" onChange={this.filterList}/>
+            results = (
+                <div className="results">
+                    <h2>Sets</h2>
+                    <BootstrapTable keyField="name" data={this.state.data} columns={columns} bordered={false}></BootstrapTable>
                 </div>
-                <div className="input-group filter-list">
-                    <input type="text" size="35" className="form-control form-control-lg" placeholder="Set List (CSV) e.g. m19,kld,aer" onChange={this.filterListSets}/>
-                </div>
-                </form>
-                <h2>Sets</h2>
-                <BootstrapTable keyField="name" data={this.state.data} columns={columns} bordered={false}/>
-            </div>
             )
         } else {
-            return <p>Loading...</p>
+            results = (
+                <div className="row">
+                    <div className="loading-img col-sm-6 col-sm-offset-3">
+                        <img className="img-responsive center-block" alt="Loading" src="loading.gif"></img>
+                    </div>
+                </div>
+            )
         }
+
+        return (
+            <div className="filter-list col-sm-10 col-sm-offset-1">
+                <Filter
+                    defaultFilter={this.state.filter}
+                    filters={["Name", "Code", "Type"]}
+                    onSelect={this.dropdownSelected}
+                    onChange={this.filterList}
+                />
+                <SetList onChange={this.filterListSets} />
+                {results}
+            </div>
+        )
     }
 }
