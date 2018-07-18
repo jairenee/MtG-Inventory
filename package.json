@@ -1,10 +1,9 @@
 {
   "name": "mtginventory",
-  "version": "0.0.1",
-  "description": "An inventory tracker for Magic the Gathering for Google Spreadsheets",
+  "version": "0.1.0",
+  "description": "An inventory tracker for Magic the Gathering with Google Spreadsheets integration",
   "main": "./src/main.js",
   "dependencies": {
-    "async": "^2.6.1",
     "googleapis": "^32.0.0",
     "mtgsdk": "^0.3.0",
     "nedb": "^1.8.0",
@@ -15,14 +14,18 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4"
   },
+  "config": {
+    "port": "3000"
+  },
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "electron": "2.0.5",
     "electron-packager": "^12.1.0",
     "foreman": "^3.0.1"
   },
   "homepage": "file://./",
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env BROWSER=none PORT=$npm_package_config_port react-scripts start",
     "electron": "electron .",
     "dev": "nf start",
     "build-all": "electron-packager ./ MtGInventory --all --out='./build'",
