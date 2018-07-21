@@ -1,15 +1,38 @@
-const {app, BrowserWindow} = require('electron'),
+const {app, BrowserWindow, ipcMain} = require('electron'),
+      Store = require('electron-store');
+      store = new Store({
+        defaults: {
+          windowBounds: {
+            width: 1000,
+            height: 600,
+            x: 0,
+            y: 0
+          }
+        }
+      }),
       url = require("url"),
       path = require("path"),
       process = require("process"),
       tools = process.env.TOOLS || false;
 
+if (tools) {
+  require("electron-debug")();
+}
+
 let win = null;
 
 function createWindow() {
   // Initialize the window to our specified dimensions
-  win = new BrowserWindow({show: false, width: 1000, height: 600});
+  win = new BrowserWindow({show: false, ...store.get("windowBounds")});
   win.setMenu(null);
+
+  function saveWindowBounds() {
+    store.set('windowBounds', win.getBounds());
+  }
+
+  // listen to `resize` and `move` and save the settings
+  win.on('resize', saveWindowBounds);
+  win.on('move', saveWindowBounds);
 
   // Specify entry point
   const startUrl = process.env.ELECTRON_START_URL || url.format({
@@ -18,10 +41,6 @@ function createWindow() {
     slashes: true
   });
   win.loadURL(startUrl);
-
-  if (tools) {
-    win.toggleDevTools();
-  }
 
   win.once('ready-to-show', () => {
     win.show()
@@ -47,4 +66,9 @@ app.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
     app.quit();
   }
+});
+
+ipcMain.on("store-sets", (event, arg) => {
+  console.log(event, arg)
+  event.sender.send("store-sets-return", "Stored!");
 });

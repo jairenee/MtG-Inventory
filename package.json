@@ -4,6 +4,9 @@
   "description": "An inventory tracker for Magic the Gathering with Google Spreadsheets integration",
   "main": "./src/main.js",
   "dependencies": {
+    "electron-context-menu": "^0.10.0",
+    "electron-store": "^2.0.0",
+    "electron-util": "^0.9.0",
     "googleapis": "^32.0.0",
     "mtgsdk": "^0.3.0",
     "nedb": "^1.8.0",
@@ -22,6 +25,7 @@
   "devDependencies": {
     "cross-env": "^5.2.0",
     "electron": "2.0.5",
+    "electron-debug": "^2.0.0",
     "electron-packager": "^12.1.0",
     "foreman": "^3.0.1"
   },

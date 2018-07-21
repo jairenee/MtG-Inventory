@@ -2,12 +2,8 @@ import React from 'react'
 import { DropdownButton, MenuItem, InputGroup, Button, FormControl, HelpBlock } from 'react-bootstrap'
 
 export class Filter extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
-        let button, filters = [];
+        let button;
 
         if (this.props.button) {
             button = (
@@ -41,10 +37,6 @@ export class Filter extends React.Component {
 }
 
 export class SetList extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <InputGroup className="filter-list">
@@ -54,3 +46,9 @@ export class SetList extends React.Component {
         )
     }
 }
+
+// export class AddFilter extends React.Component {
+//     render() {
+
+//     }
+// }

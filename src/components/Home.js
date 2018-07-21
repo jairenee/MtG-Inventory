@@ -7,7 +7,7 @@ export class Home extends React.Component {
     //       Quick add to inventory
     render() {
       return (
-        <div>
+        <div className="filter-list">
             <center>
                 <h2>MtG Inventory</h2>
                 <p className="lead">A tool for quickly finding and sorting information about MtG Cards</p>

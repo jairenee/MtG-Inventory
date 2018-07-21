@@ -67,16 +67,6 @@ export class Sets extends React.Component {
         }
         this.setState({initialData: sets, data: sets})
     }
-
-    noData() {
-        return (
-            <div className="row">
-                <div className="loading-img col-sm-6 col-sm-offset-3">
-                    <img className="img-responsive center-block" alt="Loading" src="loading.gif"></img>
-                </div>
-            </div>
-        )
-    }
   
     render() {
         const columns = [{

@@ -6,7 +6,7 @@ import { LinkContainer } from 'react-router-bootstrap'
 export class TopNav extends React.Component {
     render() {
       return (
-        <Navbar staticTop fluid inverse>
+        <Navbar staticTop fluid inverse collapseOnSelect>
           <Navbar.Header>
             <Navbar.Brand>
               <Link to="/">MtG Inventory</Link>

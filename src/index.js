@@ -5,34 +5,29 @@ import {
   Route
 } from 'react-router-dom'
 import {TopNav, Home, Sets, Cards} from './components/Components'
+import {remote} from 'electron'
 
 // I'm just learning how this works here. Never used NeDB before.
-var Datastore = require('nedb');
-var db = new Datastore({filename: "./datastore", autoload: true});
+let crud = require("./crud"), 
+    Datastore = require('nedb'),
+    db = {};
 
-db.find({ name: 'testVar'}, (err, docs) => {
-  if (err) {
-    console.log(err);
-  } else {
-    if (!docs.length) {
-      console.log("Creating");
-      let doc = { name: 'testVar',
-                  quantity : 100
-                };
+// ipcRenderer.send("store-sets", {test: "event", hello: "world"});
 
-      db.insert(doc, function (err, newDoc) {  
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(newDoc);
-        }
-      });
-    } else {
-      console.log("Read")
-      console.log(docs);
-    }
-  }
-})
+// ipcRenderer.on("store-sets-return", (event, args) => {
+//   console.log(event, args);
+// })
+
+console.log(remote.app.getPath("userData"))
+
+// db.sets = new Datastore();
+// crud.getAllSets()
+//   .then((setList) => {
+//     for (let set in setList) {
+//       db
+//     }
+//   })
+
 // End learning.
 
 class App extends React.Component {
