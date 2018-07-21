@@ -7,7 +7,7 @@ let crud = require("../crud");
 export class Sets extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {initialData: null, data: [], filter: "Name"};
+        this.state = {initialData: null, data: null, filter: "Name"};
     
         this.filterList = this.filterList.bind(this);
         this.filterListSets = this.filterListSets.bind(this);
@@ -59,7 +59,7 @@ export class Sets extends React.Component {
     // filtered on the fly without modifying
     // the presented data.
     // TODO: Cache
-    async componentDidMount() {
+    async componentWillMount() {
         let sets = await crud.getAllSets()
         for (let set in sets) {
             let icon = `ss ss-${sets[set].code.toLowerCase()} ss-2x ss-fw`

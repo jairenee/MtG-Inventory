@@ -54,6 +54,11 @@ function createWindow() {
 
 app.on('ready', function () {
   createWindow();
+
+  ipcMain.on("store-sets", (event, arg) => {
+    console.log(event, arg)
+    event.sender.send("store-sets-return", arg);
+  });
 });
 
 app.on('activate', () => {
@@ -66,9 +71,4 @@ app.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
     app.quit();
   }
-});
-
-ipcMain.on("store-sets", (event, arg) => {
-  console.log(event, arg)
-  event.sender.send("store-sets-return", "Stored!");
 });

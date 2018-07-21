@@ -32,7 +32,8 @@
   "homepage": "file://./",
   "scripts": {
     "start": "cross-env BROWSER=none PORT=$npm_package_config_port react-scripts start",
-    "electron": "electron .",
+    "electron": "node src/electron-wait-react",
+    "electron-tools": "cross-env TOOLS=true node src/electron-wait-react",
     "dev-tools": "cross-env TOOLS=true nf start",
     "dev": "nf start",
     "build-all": "electron-packager ./ MtGInventory --all --out='./build'",

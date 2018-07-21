@@ -5,20 +5,21 @@ import {
   Route
 } from 'react-router-dom'
 import {TopNav, Home, Sets, Cards} from './components/Components'
-import {remote} from 'electron'
+
+const ipcRenderer = window.require("electron").ipcRenderer,
+      remote = window.require("electron").remote,
+      userData = remote.app.getPath("userData");
 
 // I'm just learning how this works here. Never used NeDB before.
 let crud = require("./crud"), 
     Datastore = require('nedb'),
     db = {};
 
-// ipcRenderer.send("store-sets", {test: "event", hello: "world"});
+ipcRenderer.send("store-sets", {test: "event", hello: "world"});
 
-// ipcRenderer.on("store-sets-return", (event, args) => {
-//   console.log(event, args);
-// })
-
-console.log(remote.app.getPath("userData"))
+ipcRenderer.on("store-sets-return", (event, args) => {
+  console.log(event, args);
+})
 
 // db.sets = new Datastore();
 // crud.getAllSets()
