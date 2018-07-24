@@ -11,10 +11,12 @@ function formatReleaseDate(inputDate) {
     return `${months[d.getMonth()]} ${date}, ${d.getFullYear()}`
 }
 
+console.log(module)
+
 // Maybe there's a better way to do this, but I just really didn't want this
 // unnecessary info. Really an artifact from the CLI tool.
 
-export function snip(card) {
+module.exports.snip = function (card) {
     delete card.artist;
     delete card.foreignNames;
     delete card.originalText;
@@ -22,19 +24,16 @@ export function snip(card) {
     return card;
 }
 
-export function formatSetsJson(setList) {
+module.exports.formatSetsJson = function (setList) {
     let list = [];
     for (let set of setList) {
         let releaseDate = formatReleaseDate(set.releaseDate)
-        list.push({name: set.name, code: set.code, type: set.type, release: releaseDate})
+        list.push({_id: set.code, name: set.name, code: set.code, type: set.type, release: releaseDate})
     }
-    list.sort((a, b) => {
-            return new Date(a.release) - new Date(b.release)
-        });
     return list;
 }
 
-export async function formatCardsJson(cardList) {
+module.exports.formatCardsJson = function (cardList) {
     let cards = [];
     for (let card of cardList) {
         let reverse, printings;
@@ -73,7 +72,7 @@ export async function formatCardsJson(cardList) {
     return cards;
 }
 
-export function getRarity(config) {
+module.exports.getRarity = function (config) {
     if (config.rarity && config.rarity.length === 1) {
         switch (config.rarity) {
             case "M":
@@ -97,7 +96,7 @@ export function getRarity(config) {
 }
 
 // For future feature use.
-export function getSheet(doc, sheetName) {
+module.exports.getSheet = function(doc, sheetName) {
     return new Promise(async (res, rej) => {
         doc.getInfo((err, info) => {
             let wantedSheet;
@@ -124,7 +123,7 @@ export function getSheet(doc, sheetName) {
 // This is only used by the commented out
 // CLI function.
 
-// function sortSetByDate(sets) {
+//sortSetByDate(sets) {
 //     return new Promise(async (res, rej) => {
 //         let key = {}
 //         for (let set of sets) {
@@ -141,7 +140,7 @@ export function getSheet(doc, sheetName) {
 // BootstrapTable works with JSON, but I'll
 // leave it here just in case.
 
-// function formatSets(setList) {
+//formatSets(setList) {
 //     let list = [];
 //     for (let set of setList) {
 //         let releaseDate = formatReleaseDate(set.releaseDate),
@@ -158,7 +157,7 @@ export function getSheet(doc, sheetName) {
 // Same with this. Just here for legacy reasons for
 // back when this was a CLI instead of a web app.
 
-// async function formatCards(cardList) {
+// asyncformatCards(cardList) {
 //     let sets = {}
 //     for (let card of cardList) {
 //         if (!sets[card.set]) {

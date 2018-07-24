@@ -13,7 +13,11 @@ const {app, BrowserWindow, ipcMain} = require('electron'),
       url = require("url"),
       path = require("path"),
       process = require("process"),
-      tools = process.env.TOOLS || false;
+      tools = process.env.TOOLS || false,
+      Datastore = require('nedb'),
+      crud = require("./crud");
+
+let db = {};
 
 if (tools) {
   require("electron-debug")();
@@ -55,10 +59,34 @@ function createWindow() {
 app.on('ready', function () {
   createWindow();
 
-  ipcMain.on("store-sets", (event, arg) => {
-    console.log(event, arg)
-    event.sender.send("store-sets-return", arg);
+  db.sets = new Datastore({filename: `${app.getPath("userData")}/sets.db`, autoload: true});
+
+  async function saveSets(event, emit) {
+    console.log("Storing")
+    let sets = await crud.getAllSets();
+    sets.sort((a, b) => {
+      return new Date(a.release) - new Date(b.release)
+    });
+    event.sender.send(emit, sets);
+    db.sets.insert(sets);
+  }
+
+  ipcMain.on("store-sets", async (event, arg) => {
+    saveSets(event, "sets-stored")
   });
+
+  ipcMain.on("get-sets", async (event) => {
+    db.sets.find({}, (err, sets) => {
+      if (err) { 
+        saveSets(event, "sets-returned");
+      } else {
+        sets.sort((a, b) => {
+          return new Date(a.release) - new Date(b.release)
+        });
+        event.sender.send("sets-returned", sets);
+      }
+    })
+  })
 });
 
 app.on('activate', () => {

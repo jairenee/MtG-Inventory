@@ -2,13 +2,14 @@ import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { Filter, SetList } from './Filter'
 
-let crud = require("../crud");
+const ipcRenderer = window.require("electron").ipcRenderer;
 
 export class Sets extends React.Component {
     constructor(props) {
         super(props)
         this.state = {initialData: null, data: null, filter: "Name"};
     
+        this.filterListState = new React.createRef();
         this.filterList = this.filterList.bind(this);
         this.filterListSets = this.filterListSets.bind(this);
         this.dropdownSelected = this.dropdownSelected.bind(this);
@@ -40,18 +41,21 @@ export class Sets extends React.Component {
     // Filter from the search bar instead, for less
     // group focused searching.
     filterList(event){
+        let that = this;
         let filter = this.state.filter.toLowerCase();
         var updatedList = this.state.initialData;
         updatedList = updatedList.filter(function(item){
             return (item[filter].toLowerCase().search(
-                event.target.value.toLowerCase()) !== -1);
+                event ? event.target.value.toLowerCase() : that.filterListState.current.value) !== -1);
         });
         this.setState({data: updatedList});
     }
 
     // Handling the dropdown's filter state.
     dropdownSelected(eventKey, event) {
-        this.setState({filter: eventKey})
+        this.setState({filter: eventKey}, () => {
+            this.filterList();
+        })
         event.preventDefault();
     }
 
@@ -59,13 +63,15 @@ export class Sets extends React.Component {
     // filtered on the fly without modifying
     // the presented data.
     // TODO: Cache
-    async componentWillMount() {
-        let sets = await crud.getAllSets()
-        for (let set in sets) {
-            let icon = `ss ss-${sets[set].code.toLowerCase()} ss-2x ss-fw`
-            sets[set].icon = <i className={icon}></i>;
-        }
-        this.setState({initialData: sets, data: sets})
+    async componentDidMount() {
+        ipcRenderer.send("get-sets")
+        ipcRenderer.on("sets-returned", (event, sets) => {
+            for (let set in sets) {
+                let icon = `ss ss-${sets[set].code.toLowerCase()} ss-2x ss-fw`
+                sets[set].icon = <i className={icon}></i>;
+            }
+            this.setState({initialData: sets, data: sets})
+        })
     }
   
     render() {
@@ -112,6 +118,7 @@ export class Sets extends React.Component {
                     filters={["Name", "Code", "Type"]}
                     onSelect={this.dropdownSelected}
                     onChange={this.filterList}
+                    thisRef={this.filterListState}
                 />
                 <SetList onChange={this.filterListSets} />
                 {results}

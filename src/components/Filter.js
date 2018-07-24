@@ -20,15 +20,16 @@ export class Filter extends React.Component {
                         <DropdownButton
                             bsStyle="default"
                             title={this.props.defaultFilter}
+                            id="search-filter"
                         >
                             {
-                                this.props.filters.map((filter) => (
-                                    <MenuItem eventKey={filter} onSelect={this.props.onSelect}>{filter}</MenuItem>
-                                ))
+                                this.props.filters.map((filter, key) => {
+                                    return <MenuItem key={key} eventKey={filter} onSelect={this.props.onSelect}>{filter}</MenuItem>
+                                })
                             }
                         </DropdownButton>
                     </InputGroup.Button>
-                    <FormControl type="text" placeholder="Filter" onChange={this.props.onChange} />
+                    <FormControl type="text" placeholder="Filter" onChange={this.props.onChange} inputRef={this.props.thisRef} />
                     {button}
                 </InputGroup>
             </form>
