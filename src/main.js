@@ -60,9 +60,10 @@ app.on('ready', function () {
   createWindow();
 
   db.sets = new Datastore({filename: `${app.getPath("userData")}/sets.db`, autoload: true});
+  db.cards = new Datastore({filename: `${app.getPath("userData")}/cards.db`, autoload: true});
 
   async function saveSets(event, emit) {
-    console.log("Storing")
+    console.log("Storing Sets")
     let sets = await crud.getAllSets();
     sets.sort((a, b) => {
       return new Date(a.release) - new Date(b.release)
@@ -71,10 +72,61 @@ app.on('ready', function () {
     db.sets.insert(sets);
   }
 
+  async function saveCards(event, emit) {
+    console.log("Storing Cards");
+    let sets = await getSets();
+    for (let set in sets) {
+      console.log("Set:", parseInt(set)+1, "of", sets.length)
+      let thisSet = await crud.getCardsByFilter({filter: "set", search: sets[set].code})
+      db.cards.insert(thisSet);
+    }
+    event.sender.send(emit, "Cards stored")
+  }
+
+  async function pullSets() {
+    return new Promise((res, rej) => {
+      db.sets.find({}, async (err, sets) => {
+        if (err) { 
+          let pulledSets = await crud.getAllSets();
+          pulledSets.sort((a, b) => {
+            return new Date(a.release) - new Date(b.release)
+          });
+          return res(pulledSets);
+        } else {
+          sets.sort((a, b) => {
+            return new Date(a.release) - new Date(b.release)
+          });
+          return res(sets);
+        }
+      })
+    })
+  }
+
+  async function getSets(event, emit) {
+    let sets = await pullSets();
+    if (event) {
+      event.sender.send(emit, sets)
+    } else {
+      return sets;
+    }
+  }
+
   async function searchCards(event, args) {
     console.log("Searching")
-    let cards = await crud.getCardsByFilter(args);
-    event.sender.send("cards-returned", cards);
+    db.cards.find({ $where: function () {
+      if (this[args.filter].includes(args.search)) {
+        console.log(`${this[args.filter]} ${args.search}`)
+      }
+       return this[args.filter].toLowerCase().includes(args.search); 
+    } }, async (err, docs) => {
+      if (err || docs.length === 0) {
+        let cards = await crud.getCardsByFilter({filter: args.filter, search: args.search});
+        event.sender.send("cards-returned", cards);
+      } else {
+        console.log("Loaded from db!");
+        event.sender.send("cards-returned", docs);
+      }
+    })
   }
 
   ipcMain.on("store-sets", async (event) => {
@@ -82,20 +134,11 @@ app.on('ready', function () {
   });
 
   ipcMain.on("get-sets", async (event) => {
-    db.sets.find({}, (err, sets) => {
-      if (err) { 
-        saveSets(event, "sets-returned");
-      } else {
-        sets.sort((a, b) => {
-          return new Date(a.release) - new Date(b.release)
-        });
-        event.sender.send("sets-returned", sets);
-      }
-    })
+    getSets(event, "sets-returned")
   })
 
   ipcMain.on("store-cards", async (event) => {
-    
+    saveCards(event, "cards-stored");
   })
 
   ipcMain.on("get-cards", async (event, args) => {

@@ -160,20 +160,27 @@ module.exports.getReleaseDate = async function(code) {
 
 // Cards
 
+module.exports.getAllCards = async function() {
+    let 
+    return module.exports.getCardsByFilter();
+}
+
 module.exports.getCardsByFilter = async function(filters) {
     console.log("Getting cards");
     return new Promise(async function(res, rej) {
 
         let filterObj = {};
-        filterObj[filters.filter] = filters.search;
+        if (filters) filterObj[filters.filter] = filters.search;
         let thisCard = await mtg.card.all(filterObj),
             confirmedCards = [];
 
         thisCard.on("data", card => {
+            // console.log(card.name);
             confirmedCards.push(helpers.snip(card));
         })
 
         thisCard.on("end", () => {
+            console.log("Ending getting cards")
             if (confirmedCards.length === 0) {
                 return res([]);
             } else {

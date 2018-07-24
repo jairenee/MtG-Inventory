@@ -63,7 +63,8 @@ module.exports.formatCardsJson = function (cardList) {
             color: card.colorIdentity ? card.colorIdentity.join(", ") : "None", 
             rarity: card.rarity,
             image: card.imageUrl,
-            id: card.multiverseId
+            _id: card.multiverseId,
+            id: card.multiverseId,
         });
     }
 
