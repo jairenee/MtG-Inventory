@@ -29,6 +29,7 @@ export class TopNav extends React.Component {
             <Nav pullRight>
               <NavItem>
                 <SyncButton type="sets" />
+                <SyncButton type="cards" />
               </NavItem>
             </Nav>
           </Navbar.Collapse>

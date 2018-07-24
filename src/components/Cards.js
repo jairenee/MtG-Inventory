@@ -28,8 +28,10 @@ export class Cards extends React.Component {
         event.preventDefault();
         this.setState({loading: true})
         let filter = this.state.filter.toLowerCase();
-        ipcRenderer.send("get-card-search", {search: this.state.search, filter: filter})
-        ipcRenderer.on("cards-returned", (event, list) => {
+        console.log("Sending", this.state.search, filter)
+        ipcRenderer.send("get-cards", {search: this.state.search, filter: filter})
+        ipcRenderer.once("cards-returned", (event, list) => {
+            console.log("Returned")
             this.setState({data: list, loading: false});
         });
     }

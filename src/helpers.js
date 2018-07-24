@@ -11,8 +11,6 @@ function formatReleaseDate(inputDate) {
     return `${months[d.getMonth()]} ${date}, ${d.getFullYear()}`
 }
 
-console.log(module)
-
 // Maybe there's a better way to do this, but I just really didn't want this
 // unnecessary info. Really an artifact from the CLI tool.
 

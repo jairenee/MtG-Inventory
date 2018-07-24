@@ -71,7 +71,13 @@ app.on('ready', function () {
     db.sets.insert(sets);
   }
 
-  ipcMain.on("store-sets", async (event, arg) => {
+  async function searchCards(event, args) {
+    console.log("Searching")
+    let cards = await crud.getCardsByFilter(args);
+    event.sender.send("cards-returned", cards);
+  }
+
+  ipcMain.on("store-sets", async (event) => {
     saveSets(event, "sets-stored")
   });
 
@@ -86,6 +92,14 @@ app.on('ready', function () {
         event.sender.send("sets-returned", sets);
       }
     })
+  })
+
+  ipcMain.on("store-cards", async (event) => {
+    
+  })
+
+  ipcMain.on("get-cards", async (event, args) => {
+    searchCards(event, args)
   })
 });
 

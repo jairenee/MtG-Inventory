@@ -12,7 +12,8 @@ const tryConnection = () => client.connect({port: port}, () => {
             console.log('Starting Electron!');
             startedElectron = true;
             const exec = require('child_process').exec;
-            exec('electron .');
+            let child = exec('electron .');
+            child.stdout.pipe(process.stdout);
         }
     }
 );

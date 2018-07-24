@@ -11,11 +11,9 @@ export class SyncButton extends React.Component {
     }
 
     getData() {
-        console.log("Clicked")
         ipcRenderer.send(`store-${this.props.type}`)
-        console.log(this.props.type)
         ipcRenderer.once(`${this.props.type}-stored`, (event, args) => {
-            console.log(args);
+            console.log("Stored");
         })
     }
 

@@ -160,12 +160,12 @@ module.exports.getReleaseDate = async function(code) {
 
 // Cards
 
-module.exports.getCardsByFilter = async function(input, filter) {
+module.exports.getCardsByFilter = async function(filters) {
     console.log("Getting cards");
     return new Promise(async function(res, rej) {
 
         let filterObj = {};
-        filterObj[filter] = input
+        filterObj[filters.filter] = filters.search;
         let thisCard = await mtg.card.all(filterObj),
             confirmedCards = [];
 
