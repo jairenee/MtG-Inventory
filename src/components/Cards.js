@@ -2,7 +2,7 @@ import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { Filter } from './Filter'
 
-let crud = require("../crud");
+const ipcRenderer = window.require("electron").ipcRenderer;
 
 export class Cards extends React.Component {
     constructor(props) {
@@ -28,8 +28,12 @@ export class Cards extends React.Component {
         event.preventDefault();
         this.setState({loading: true})
         let filter = this.state.filter.toLowerCase();
-        let list = await crud.getCardsByFilter(this.state.search, filter);
-        this.setState({data: list, loading: false});
+        console.log("Sending", this.state.search, filter)
+        ipcRenderer.send("get-cards", {search: this.state.search, filter: filter})
+        ipcRenderer.once("cards-returned", (event, list) => {
+            console.log("Returned")
+            this.setState({data: list, loading: false});
+        });
     }
     
     // Handling the dropdown's filter state
@@ -48,6 +52,9 @@ export class Cards extends React.Component {
         }, {
             dataField: 'name',
             text: 'Name'
+        }, {
+            dataField: "cmc",
+            text: "CMC"
         }, {
             dataField: 'reverse',
             text: 'Reverse'

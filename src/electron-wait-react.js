@@ -1,5 +1,5 @@
-const net = require('net');
-const port = process.env.npm_package_config_port || 3000;
+const net = require('net'),
+      port = process.env.npm_package_config_port || 3000;
 
 process.env.ELECTRON_START_URL = `http://localhost:${port}`;
 
@@ -12,7 +12,8 @@ const tryConnection = () => client.connect({port: port}, () => {
             console.log('Starting Electron!');
             startedElectron = true;
             const exec = require('child_process').exec;
-            exec('npm run electron');
+            let child = exec('electron .');
+            child.stdout.pipe(process.stdout);
         }
     }
 );
