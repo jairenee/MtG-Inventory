@@ -29,7 +29,13 @@ export class Filter extends React.Component {
                             }
                         </DropdownButton>
                     </InputGroup.Button>
-                    <FormControl type="text" placeholder="Filter" onChange={this.props.onChange} inputRef={this.props.thisRef} />
+                    <FormControl 
+                        type="text" 
+                        placeholder="Filter" 
+                        defaultValue={this.props.defaultText} 
+                        onChange={this.props.onChange} 
+                        inputRef={this.props.thisRef} 
+                    />
                     {button}
                 </InputGroup>
             </form>
@@ -41,7 +47,13 @@ export class SetList extends React.Component {
     render() {
         return (
             <InputGroup className="filter-list">
-                <FormControl type="text" size="35" placeholder="Set List (CSV) e.g. m19,kld,aer" onChange={this.props.onChange}/>
+                <FormControl 
+                    type="text" 
+                    size="35" 
+                    defaultValue={this.props.defaultText} 
+                    placeholder="Set List (CSV) e.g. m19,kld,aer" 
+                    onChange={this.props.onChange} 
+                    inputRef={this.props.thisRef} />
                 <HelpBlock>Use this to filter lists to specific sets ordered by release date. Useful for sorting large amounts of cards!</HelpBlock>
             </InputGroup>
         )

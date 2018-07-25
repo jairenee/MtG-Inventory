@@ -1,30 +1,14 @@
 import React from 'react'
-import {render} from 'react-dom'
-import {
-  BrowserRouter,
-  Route
-} from 'react-router-dom'
-import {TopNav, Home, Sets, Cards} from './components/Components'
+import { render } from 'react-dom'
+import { Provider } from 'react-redux'
+import { App } from "./containers/Components"
+import { createStore } from 'redux'
+import reducers from './reducers'
 
-// let remote = window.require("electron").remote;
-
-// console.log(remote.app.getPath("userData"));
-
-class App extends React.Component {
-  render() {
-    return (
-      <div>
-        <TopNav />
-        <Route exact path="/" component={Home}/>
-        <Route path="/sets" component={Sets}/>
-        <Route path="/cards" component={Cards}/>
-      </div>
-    )
-  }
-}
+let store = createStore(reducers);
 
 render((
-  <BrowserRouter>
+  <Provider store={store}>
     <App />
-  </BrowserRouter>
+  </Provider>
 ), document.getElementById('app'));

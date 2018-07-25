@@ -3,13 +3,15 @@ import BootstrapTable from 'react-bootstrap-table-next'
 import { Filter, SetList } from './Filter'
 
 const ipcRenderer = window.require("electron").ipcRenderer;
+let setMounted = false;
 
-export class Sets extends React.Component {
+export default class Sets extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {initialData: null, data: null, filter: "Name"};
-    
+        console.log("Creating sets")
+
         this.filterListState = new React.createRef();
+        this.setsListState = new React.createRef();
         this.filterList = this.filterList.bind(this);
         this.filterListSets = this.filterListSets.bind(this);
         this.dropdownSelected = this.dropdownSelected.bind(this);
@@ -21,7 +23,8 @@ export class Sets extends React.Component {
     // is really useful.
     // Got this finally working in real time.
     filterListSets(event){
-        let allData = this.state.initialData,
+        event.preventDefault();
+        let allData = this.props.initialData,
             setCodes = event.target.value.split(","),
             updatedList = [];
         if (setCodes[setCodes.length-1] === "") {
@@ -35,43 +38,45 @@ export class Sets extends React.Component {
         updatedList.sort((a, b) => {
             return new Date(a.release) - new Date(b.release)
         })
-        this.setState({data: updatedList});
+        this.props.dispatch({type: "handleSets", sets: updatedList, setsList: this.setsListState.current.value});
     }
   
     // Filter from the search bar instead, for less
     // group focused searching.
     filterList(event){
+        if (event) event.preventDefault();
         let that = this;
-        let filter = this.state.filter.toLowerCase();
-        var updatedList = this.state.initialData;
+        let filter = this.props.filter.toLowerCase();
+        var updatedList = this.props.initialData;
         updatedList = updatedList.filter(function(item){
             return (item[filter].toLowerCase().search(
                 event ? event.target.value.toLowerCase() : that.filterListState.current.value) !== -1);
         });
-        this.setState({data: updatedList});
+        this.props.dispatch({type: "handleFilters", sets: updatedList, filterText: this.filterListState.current.value});
     }
 
     // Handling the dropdown's filter state.
     dropdownSelected(eventKey, event) {
-        this.setState({filter: eventKey}, () => {
-            this.filterList();
-        })
         event.preventDefault();
+        this.props.dispatch({type: "setSetsFilter", filter: eventKey});
+        this.filterList();
     }
 
     // Setting up initial data so data can be
     // filtered on the fly without modifying
     // the presented data.
-    // TODO: Cache
     async componentDidMount() {
-        ipcRenderer.send("get-sets")
-        ipcRenderer.on("sets-returned", (event, sets) => {
-            for (let set in sets) {
-                let icon = `ss ss-${sets[set].code.toLowerCase()} ss-2x ss-fw`
-                sets[set].icon = <i className={icon}></i>;
-            }
-            this.setState({initialData: sets, data: sets})
-        })
+        if (!setMounted) {
+            ipcRenderer.send("get-sets")
+            ipcRenderer.on("sets-returned", (event, sets) => {
+                for (let set in sets) {
+                    let icon = `ss ss-${sets[set].code.toLowerCase()} ss-2x ss-fw`
+                    sets[set].icon = <i className={icon}></i>;
+                }
+                this.props.dispatch({type: "setsMounted", sets: sets, test: "Hello"})
+            })
+            setMounted = true;
+        }
     }
   
     render() {
@@ -94,11 +99,11 @@ export class Sets extends React.Component {
 
         let results;
 
-        if (this.state.data) {
+        if (this.props.data) {
             results = (
                 <div className="results">
                     <h2>Sets</h2>
-                    <BootstrapTable keyField="name" data={this.state.data} columns={columns} bordered={false}></BootstrapTable>
+                    <BootstrapTable keyField="name" data={this.props.data} columns={columns} bordered={false}></BootstrapTable>
                 </div>
             )
         } else {
@@ -114,13 +119,18 @@ export class Sets extends React.Component {
         return (
             <div className="filter-list col-sm-10 col-sm-offset-1">
                 <Filter
-                    defaultFilter={this.state.filter}
+                    defaultFilter={this.props.filter}
                     filters={["Name", "Code", "Type"]}
+                    defaultText={this.props.filterText}
                     onSelect={this.dropdownSelected}
                     onChange={this.filterList}
                     thisRef={this.filterListState}
                 />
-                <SetList onChange={this.filterListSets} />
+                <SetList 
+                    defaultText={this.props.setsList}
+                    thisRef={this.setsListState} 
+                    onChange={this.filterListSets} 
+                />
                 {results}
             </div>
         )
