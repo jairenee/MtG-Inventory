@@ -56,15 +56,16 @@ module.exports.formatCardsJson = function (cardList) {
         cards.push({
             set: card.set,
             number: card.number,
-            name: card.name, 
+            name: card.name,
+            cmc: card.cmc,
             reverse: reverse, 
             printings: printings, 
             type: card.type, 
             color: card.colorIdentity ? card.colorIdentity.join(", ") : "None", 
             rarity: card.rarity,
             image: card.imageUrl,
-            _id: card.multiverseId,
-            id: card.multiverseId,
+            _id: card.id,
+            id: card.multiverseid,
         });
     }
 

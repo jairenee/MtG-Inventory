@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Navbar, Nav, NavItem } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
-import { SyncButton } from "./Buttons"
+import { SyncButton, ClearButton } from "./Buttons"
 
 export class TopNav extends React.Component {
     render() {
@@ -30,6 +30,7 @@ export class TopNav extends React.Component {
               <NavItem>
                 <SyncButton type="sets" />
                 <SyncButton type="cards" />
+                <ClearButton />
               </NavItem>
             </Nav>
           </Navbar.Collapse>

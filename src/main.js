@@ -114,12 +114,10 @@ app.on('ready', function () {
   async function searchCards(event, args) {
     console.log("Searching")
     db.cards.find({ $where: function () {
-      if (this[args.filter].includes(args.search)) {
-        console.log(`${this[args.filter]} ${args.search}`)
-      }
-       return this[args.filter].toLowerCase().includes(args.search); 
+      return this[args.filter].toLowerCase().includes(args.search); 
     } }, async (err, docs) => {
       if (err || docs.length === 0) {
+        if (err) console.log(err)
         let cards = await crud.getCardsByFilter({filter: args.filter, search: args.search});
         event.sender.send("cards-returned", cards);
       } else {
@@ -143,6 +141,13 @@ app.on('ready', function () {
 
   ipcMain.on("get-cards", async (event, args) => {
     searchCards(event, args)
+  })
+
+  ipcMain.on("clear-cards", async (event) => {
+    console.log("Received clear command")
+    db.cards.remove({}, { multi: true }, function (err, numRemoved) {
+      event.sender.send("cards-cleared", numRemoved)
+    });
   })
 });
 

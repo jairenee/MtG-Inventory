@@ -53,6 +53,9 @@ export class Cards extends React.Component {
             dataField: 'name',
             text: 'Name'
         }, {
+            dataField: "cmc",
+            text: "CMC"
+        }, {
             dataField: 'reverse',
             text: 'Reverse'
         }, {

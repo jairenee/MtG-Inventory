@@ -21,3 +21,22 @@ export class SyncButton extends React.Component {
         return <Button bsSize="xsmall" onClick={this.getData}>Sync {this.props.type[0].toUpperCase() + this.props.type.substring(1)}</Button>
     }
 }
+
+export class ClearButton extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.clearData = this.clearData.bind(this);
+    }
+
+    clearData() {
+        ipcRenderer.send(`clear-cards`)
+        ipcRenderer.once(`cards-cleared`, (event, args) => {
+            console.log(args);
+        })
+    }
+
+    render() {
+        return <Button bsSize="xsmall" onClick={this.clearData}>Clear Saved</Button>
+    }
+}
