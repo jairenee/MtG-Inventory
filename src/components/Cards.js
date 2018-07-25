@@ -31,19 +31,17 @@ export default class Cards extends React.Component {
             this.props.dispatch({type: "handleSearch", sets: list, loading: false});
         });
     }
-
-    componentWillReceiveProps(nextProps) {
-        console.log(nextProps.filter);
-        if (nextProps.updateView) {
-            this.getAndFilter();
-            this.props.dispatch({type: "updateView", updateView: false})
-        }
-    }
     
     // Handling the dropdown's filter state
     dropdownSelected(eventKey, event) {
         event.preventDefault();
-        this.props.dispatch({type: "setCardsFilter", filter: eventKey, updateView: true});
+        this.props.dispatch({type: "setCardsFilter", filter: eventKey, updateView: true})
+            .then(() => {
+                if (this.props.search && this.props.updateView) {
+                    this.getAndFilter();
+                    this.props.dispatch({type: "updateView", updateView: false})
+                }
+            });
     }
     
     render() {
