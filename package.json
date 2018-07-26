@@ -39,7 +39,8 @@
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "foreman": "^3.0.1",
-    "jest": "^23.4.1"
+    "jest": "^23.4.1",
+    "react-test-renderer": "^16.4.1"
   },
   "homepage": "file://./",
   "scripts": {
@@ -51,6 +52,7 @@
     "build-all": "electron-packager ./ MtGInventory --all --out='./build'",
     "build-dev": "electron-packager ./ MtGInventory --out='./build'",
     "test": "jest",
+    "test:watch": "npm test -- --watch",
     "eject": "react-scripts eject"
   },
   "author": "Jaime Wissner <jaime.wissner@gmail.com>",

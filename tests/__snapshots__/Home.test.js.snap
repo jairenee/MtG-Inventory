@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home component should match the snapshot 1`] = `
+<div
+  className="filter-list"
+>
+  <center>
+    <h2>
+      MtG Inventory
+    </h2>
+    <p
+      className="lead"
+    >
+      A tool for quickly finding and sorting information about MtG Cards
+    </p>
+  </center>
+</div>
+`;
