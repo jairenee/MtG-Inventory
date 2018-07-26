@@ -3,6 +3,6 @@ import setsReducer from './setsReducer'
 import cardsReducer from './cardsReducer'
 
 export default combineReducers({
-  setsReducer,
-  cardsReducer
+  sets: setsReducer,
+  cards: cardsReducer
 })
