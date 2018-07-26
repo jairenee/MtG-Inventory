@@ -2,7 +2,7 @@ const mtg = require('mtgsdk'),
       helpers = require('./helpers');
 
 // Sets
-export async function getAllSets() {
+module.exports.getAllSets = async function() {
     return new Promise(async function(res, rej) {
         console.log("Getting sets");
         let sets = await mtg.set.all(),
@@ -16,7 +16,7 @@ export async function getAllSets() {
     })
 }
 
-export async function getSet(code) {
+module.exports.getSet = async function(code) {
     return new Promise(async function(res, rej) {
         let thisSet = await mtg.card.all({set: code});
         
@@ -43,7 +43,7 @@ export async function getSet(code) {
     });
 }
 
-export async function getSetCardCount(code) {
+module.exports.getSetCardCount = async function(code) {
     return new Promise(async function(res, rej) {
         let thisSet = await mtg.card.all({set: code});
         
@@ -58,7 +58,7 @@ export async function getSetCardCount(code) {
     });
 }
 
-export async function getReleaseDate(code) {
+module.exports.getReleaseDate = async function(code) {
     return new Promise(async function(res, rej) {
         let result = await mtg.set.find(code)
         res(result.set.releaseDate);
@@ -67,20 +67,27 @@ export async function getReleaseDate(code) {
 
 // Cards
 
-export async function getCardsByFilter(input, filter) {
+module.exports.getAllCards = async function() {
+    let 
+    return module.exports.getCardsByFilter();
+}
+
+module.exports.getCardsByFilter = async function(filters) {
     console.log("Getting cards");
     return new Promise(async function(res, rej) {
 
         let filterObj = {};
-        filterObj[filter] = input
+        if (filters) filterObj[filters.filter] = filters.search;
         let thisCard = await mtg.card.all(filterObj),
             confirmedCards = [];
 
         thisCard.on("data", card => {
+            // console.log(card.name);
             confirmedCards.push(helpers.snip(card));
         })
 
         thisCard.on("end", () => {
+            console.log("Ending getting cards")
             if (confirmedCards.length === 0) {
                 return res([]);
             } else {
@@ -92,7 +99,7 @@ export async function getCardsByFilter(input, filter) {
 
 // Spreadsheet Manip
 
-export async function createSetSheet(config) {
+module.exports.createSetSheet = async function(config) {
     return new Promise(async (res, rej) => {
         let confirmed,
             search;

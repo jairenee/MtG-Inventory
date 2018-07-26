@@ -2,15 +2,12 @@ import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { Filter } from './Filter'
 
-let crud = require("../crud");
+const ipcRenderer = window.require("electron").ipcRenderer;
 
-export class Cards extends React.Component {
+export default class Cards extends React.Component {
     constructor(props) {
         super(props)
-        // initialData will be used for live filtering.
-        // That's gonna be a LOT of data. Need to figure that out.
-        this.state = {initialData: null, data: null, search: null, filter: "Name", loading: false}
-    
+        this.searchState = new React.createRef();
         this.updateSearchTerm = this.updateSearchTerm.bind(this);
         this.dropdownSelected = this.dropdownSelected.bind(this);
         this.getAndFilter = this.getAndFilter.bind(this);
@@ -18,24 +15,33 @@ export class Cards extends React.Component {
     
     // Grabbing the text box.
     updateSearchTerm(event) {
-        this.setState({search: event.target.value})
+        this.props.dispatch({type: "updateSearch", search: event.target.value})
     }
     
     // Form input
     // TODO: Live searching, like the sets page.
     // That will need caching. Decided to use NeDB for now.
     async getAndFilter(event){
-        event.preventDefault();
-        this.setState({loading: true})
-        let filter = this.state.filter.toLowerCase();
-        let list = await crud.getCardsByFilter(this.state.search, filter);
-        this.setState({data: list, loading: false});
+        if (event) event.preventDefault();
+        this.props.dispatch({type: "setLoading", loading: true})
+        let filter = this.props.filter.toLowerCase();
+        ipcRenderer.send("get-cards", {search: this.props.search, filter: filter})
+        ipcRenderer.once("cards-returned", (event, list) => {
+            console.log("Returned")
+            this.props.dispatch({type: "handleSearch", sets: list, loading: false});
+        });
     }
     
     // Handling the dropdown's filter state
     dropdownSelected(eventKey, event) {
-        this.setState({filter: eventKey})
         event.preventDefault();
+        this.props.dispatch({type: "setCardsFilter", filter: eventKey, updateView: true})
+            .then(() => {
+                if (this.props.search && this.props.updateView) {
+                    this.getAndFilter();
+                    this.props.dispatch({type: "updateView", updateView: false})
+                }
+            });
     }
     
     render() {
@@ -48,6 +54,9 @@ export class Cards extends React.Component {
         }, {
             dataField: 'name',
             text: 'Name'
+        }, {
+            dataField: "cmc",
+            text: "CMC"
         }, {
             dataField: 'reverse',
             text: 'Reverse'
@@ -73,14 +82,14 @@ export class Cards extends React.Component {
 
         let results;
 
-        if (this.state.data && !this.state.loading) {
+        if (this.props.data && !this.props.loading) {
             results = (
                 <div className="results">
                     <h2>Cards</h2>
-                    <BootstrapTable keyField="id" data={this.state.data} columns={columns} bordered={false}></BootstrapTable>
+                    <BootstrapTable keyField="id" data={this.props.data} columns={columns} bordered={false}></BootstrapTable>
                 </div>
             )
-        } else if (this.state.loading) {
+        } else if (this.props.loading) {
             results = (
                 <div className="row">
                     <div className="loading-img col-sm-6 col-sm-offset-3">
@@ -93,8 +102,10 @@ export class Cards extends React.Component {
         return (
             <div className="filter-list col-sm-10 col-sm-offset-1">
                 <Filter 
-                    defaultFilter={this.state.filter}
-                    button filters={["Name", "Set", "CMC"]} 
+                    defaultFilter={this.props.filter}
+                    button filters={["Name", "Set", "CMC"]}
+                    defaultText={this.props.search}
+                    thisRef={this.searchState}
                     onSubmit={this.getAndFilter} 
                     onChange={this.updateSearchTerm} 
                     onSelect={this.dropdownSelected} 

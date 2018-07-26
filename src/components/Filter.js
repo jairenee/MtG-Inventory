@@ -2,12 +2,8 @@ import React from 'react'
 import { DropdownButton, MenuItem, InputGroup, Button, FormControl, HelpBlock } from 'react-bootstrap'
 
 export class Filter extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
-        let button, filters = [];
+        let button;
 
         if (this.props.button) {
             button = (
@@ -24,15 +20,22 @@ export class Filter extends React.Component {
                         <DropdownButton
                             bsStyle="default"
                             title={this.props.defaultFilter}
+                            id="search-filter"
                         >
                             {
-                                this.props.filters.map((filter) => (
-                                    <MenuItem eventKey={filter} onSelect={this.props.onSelect}>{filter}</MenuItem>
-                                ))
+                                this.props.filters.map((filter, key) => {
+                                    return <MenuItem key={key} eventKey={filter} onSelect={this.props.onSelect}>{filter}</MenuItem>
+                                })
                             }
                         </DropdownButton>
                     </InputGroup.Button>
-                    <FormControl type="text" placeholder="Filter" onChange={this.props.onChange} />
+                    <FormControl 
+                        type="text" 
+                        placeholder="Filter" 
+                        defaultValue={this.props.defaultText} 
+                        onChange={this.props.onChange} 
+                        inputRef={this.props.thisRef} 
+                    />
                     {button}
                 </InputGroup>
             </form>
@@ -41,16 +44,24 @@ export class Filter extends React.Component {
 }
 
 export class SetList extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <InputGroup className="filter-list">
-                <FormControl type="text" size="35" placeholder="Set List (CSV) e.g. m19,kld,aer" onChange={this.props.onChange}/>
+                <FormControl 
+                    type="text" 
+                    size="35" 
+                    defaultValue={this.props.defaultText} 
+                    placeholder="Set List (CSV) e.g. m19,kld,aer" 
+                    onChange={this.props.onChange} 
+                    inputRef={this.props.thisRef} />
                 <HelpBlock>Use this to filter lists to specific sets ordered by release date. Useful for sorting large amounts of cards!</HelpBlock>
             </InputGroup>
         )
     }
 }
+
+// export class AddFilter extends React.Component {
+//     render() {
+
+//     }
+// }
