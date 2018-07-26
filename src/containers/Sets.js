@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 let mapStatetoProps = state => {
     let props = {}
-    Object.keys(state.cards).map(key => {
+    Object.keys(state.sets).map(key => {
         props[key] = state.sets[key];
     })
     return props

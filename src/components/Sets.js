@@ -1,6 +1,7 @@
 import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next'
-import { Filter, SetList } from './Filter'
+import { FilterList, Filter, SetList } from './Filter'
+import columns from "./constants/sets"
 
 const ipcRenderer = window.require("electron").ipcRenderer;
 let setMounted = false;
@@ -57,8 +58,10 @@ export default class Sets extends React.Component {
     // Handling the dropdown's filter state.
     dropdownSelected(eventKey, event) {
         event.preventDefault();
-        this.props.dispatch({type: "setSetsFilter", filter: eventKey});
-        this.filterList();
+        this.props.dispatch({type: "setSetsFilter", filter: eventKey})
+            .then(() => {
+                if (this.filterListState.current.value) this.filterList();
+            });
     }
 
     // Setting up initial data so data can be
@@ -72,39 +75,29 @@ export default class Sets extends React.Component {
                     let icon = `ss ss-${sets[set].code.toLowerCase()} ss-2x ss-fw`
                     sets[set].icon = <i className={icon}></i>;
                 }
-                this.props.dispatch({type: "setsMounted", sets: sets, test: "Hello"})
+                this.props.dispatch({type: "setsMounted", sets: sets})
             })
             setMounted = true;
         }
     }
   
     render() {
-        const columns = [{
-            dataField: 'icon',
-            text: 'Symbol'
-        },{
-            dataField: 'name',
-            text: 'Name'
-        }, {
-            dataField: 'code',
-            text: 'Code'
-        }, {
-            dataField: 'type',
-            text: 'Type'
-        }, {
-            dataField: 'release',
-            text: 'Release Date'
-        }];
-
         let results;
 
         if (this.props.data) {
-            results = (
-                <div className="results">
-                    <h2>Sets</h2>
-                    <BootstrapTable keyField="name" data={this.props.data} columns={columns} bordered={false}></BootstrapTable>
-                </div>
-            )
+            if (this.props.data.length) {
+                results = (
+                    <div className="results">
+                        <BootstrapTable keyField="name" data={this.props.data} columns={columns} bordered={false}></BootstrapTable>
+                    </div>
+                )
+            } else {
+                results = (
+                    <div className="results">
+                        <center><h3>No results found.</h3></center>
+                    </div>
+                )
+            }
         } else {
             results = (
                 <div className="row">
@@ -118,18 +111,19 @@ export default class Sets extends React.Component {
         return (
             <div className="filter-list col-sm-10 col-sm-offset-1">
                 <Filter
-                    defaultFilter={this.props.filter}
+                    currentFilter={this.props.filter}
                     filters={["Name", "Code", "Type"]}
-                    defaultText={this.props.filterText}
+                    currentText={this.props.filterText}
                     onSelect={this.dropdownSelected}
                     onChange={this.filterList}
                     thisRef={this.filterListState}
                 />
                 <SetList 
-                    defaultText={this.props.setsList}
+                    currentText={this.props.setsList}
                     thisRef={this.setsListState} 
                     onChange={this.filterListSets} 
                 />
+                <h2>Sets</h2>
                 {results}
             </div>
         )

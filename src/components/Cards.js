@@ -1,6 +1,7 @@
 import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { Filter } from './Filter'
+import columns from "./constants/cards"
 
 const ipcRenderer = window.require("electron").ipcRenderer;
 
@@ -44,47 +45,11 @@ export default class Cards extends React.Component {
     }
     
     render() {
-        const columns = [{
-            dataField: 'set',
-            text: 'Set'
-        },{
-            dataField: 'number',
-            text: '#'
-        }, {
-            dataField: 'name',
-            text: 'Name'
-        }, {
-            dataField: "cmc",
-            text: "CMC"
-        }, {
-            dataField: 'reverse',
-            text: 'Reverse'
-        }, {
-            dataField: 'printings',
-            text: 'Printings'
-        },{
-            dataField: 'type',
-            text: 'Type'
-        },{
-            dataField: 'color',
-            text: 'Color'
-        },{
-            dataField: 'rarity',
-            text: 'Rarity'
-        },{
-            dataField: 'image',
-            text: 'Image',
-            formatter(cell) {
-                return <img alt="No Card Image Available" aria-hidden src={cell}></img>
-            }
-        }];
-
         let results;
 
         if (this.props.data && !this.props.loading) {
             results = (
                 <div className="results">
-                    <h2>Cards</h2>
                     <BootstrapTable keyField="id" data={this.props.data} columns={columns} bordered={false}></BootstrapTable>
                 </div>
             )
@@ -101,14 +66,15 @@ export default class Cards extends React.Component {
         return (
             <div className="filter-list col-sm-10 col-sm-offset-1">
                 <Filter 
-                    defaultFilter={this.props.filter}
+                    currentFilter={this.props.filter}
                     button filters={["Name", "Set", "CMC"]}
-                    defaultText={this.props.search}
+                    currentText={this.props.search}
                     thisRef={this.searchState}
                     onSubmit={this.getAndFilter} 
                     onChange={this.updateSearchTerm} 
                     onSelect={this.dropdownSelected} 
                 />
+                <h2>Cards</h2>
                 {results}
             </div>
         )

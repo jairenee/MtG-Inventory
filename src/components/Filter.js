@@ -1,6 +1,18 @@
 import React from 'react'
 import { DropdownButton, MenuItem, InputGroup, Button, FormControl, HelpBlock } from 'react-bootstrap'
 
+export class FilterList extends React.Component {
+    render() {
+        return (<Filter
+            defaultFilter="Name"
+            filters={["Name", "Code", "Type"]}
+            onSelect={this.dropdownSelected}
+            onChange={this.filterList}
+            thisRef={this.filterListState}
+        />)
+    }
+}
+
 export class Filter extends React.Component {
     render() {
         let button;
@@ -19,7 +31,7 @@ export class Filter extends React.Component {
                     <InputGroup.Button>
                         <DropdownButton
                             bsStyle="default"
-                            title={this.props.defaultFilter}
+                            title={this.props.currentFilter}
                             id="search-filter"
                         >
                             {
@@ -32,7 +44,7 @@ export class Filter extends React.Component {
                     <FormControl 
                         type="text" 
                         placeholder="Filter" 
-                        defaultValue={this.props.defaultText} 
+                        defaultValue={this.props.currentText} 
                         onChange={this.props.onChange} 
                         inputRef={this.props.thisRef} 
                     />
@@ -50,7 +62,7 @@ export class SetList extends React.Component {
                 <FormControl 
                     type="text" 
                     size="35" 
-                    defaultValue={this.props.defaultText} 
+                    defaultValue={this.props.currentText} 
                     placeholder="Set List (CSV) e.g. m19,kld,aer" 
                     onChange={this.props.onChange} 
                     inputRef={this.props.thisRef} />
