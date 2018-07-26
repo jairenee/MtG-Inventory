@@ -26,12 +26,20 @@
     "port": "3000"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-jest": "^23.4.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
     "cross-env": "^5.2.0",
     "electron": "2.0.5",
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "^2.2.4",
     "electron-packager": "^12.1.0",
-    "foreman": "^3.0.1"
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "foreman": "^3.0.1",
+    "jest": "^23.4.1"
   },
   "homepage": "file://./",
   "scripts": {
@@ -42,7 +50,7 @@
     "dev": "nf start",
     "build-all": "electron-packager ./ MtGInventory --all --out='./build'",
     "build-dev": "electron-packager ./ MtGInventory --out='./build'",
-    "test": "react-scripts test --env=jsdom",
+    "test": "jest",
     "eject": "react-scripts eject"
   },
   "author": "Jaime Wissner <jaime.wissner@gmail.com>",

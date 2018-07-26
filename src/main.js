@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron'),
+const { app, BrowserWindow } = require('electron'),
       { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer'),
       Store = require('electron-store');
       store = new Store({
@@ -16,11 +16,11 @@ const { app, BrowserWindow, ipcMain } = require('electron'),
       process = require("process"),
       tools = process.env.TOOLS || false,
       Datastore = require('nedb'),
-      crud = require("./crud");
+      crud = require("./crud"),
+      handleEvents = require("./redux/handleEvents")
 
-let db = {};
-
-let win = null;
+let db = {}, 
+    win = null;
 
 if (tools) {
   require("electron-debug")();
@@ -68,93 +68,7 @@ app.on('ready', function () {
   db.sets = new Datastore({filename: `${app.getPath("userData")}/sets.db`, autoload: true});
   db.cards = new Datastore({filename: `${app.getPath("userData")}/cards.db`, autoload: true});
 
-  async function saveSets(event, emit) {
-    console.log("Storing Sets")
-    let sets = await crud.getAllSets();
-    sets.sort((a, b) => {
-      return new Date(a.release) - new Date(b.release)
-    });
-    event.sender.send(emit, sets);
-    db.sets.insert(sets);
-  }
-
-  async function saveCards(event, emit) {
-    console.log("Storing Cards");
-    let sets = await getSets();
-    for (let set in sets) {
-      console.log("Set:", parseInt(set)+1, "of", sets.length)
-      let thisSet = await crud.getCardsByFilter({filter: "set", search: sets[set].code})
-      db.cards.insert(thisSet);
-    }
-    event.sender.send(emit, "Cards stored")
-  }
-
-  async function pullSets() {
-    return new Promise((res, rej) => {
-      db.sets.find({}, async (err, sets) => {
-        if (err) { 
-          let pulledSets = await crud.getAllSets();
-          pulledSets.sort((a, b) => {
-            return new Date(a.release) - new Date(b.release)
-          });
-          return res(pulledSets);
-        } else {
-          sets.sort((a, b) => {
-            return new Date(a.release) - new Date(b.release)
-          });
-          return res(sets);
-        }
-      })
-    })
-  }
-
-  async function getSets(event, emit) {
-    let sets = await pullSets();
-    if (event) {
-      event.sender.send(emit, sets)
-    } else {
-      return sets;
-    }
-  }
-
-  async function searchCards(event, args) {
-    console.log("Searching")
-    db.cards.find({ $where: function () {
-      return this[args.filter].toLowerCase().includes(args.search); 
-    } }, async (err, docs) => {
-      if (err || docs.length === 0) {
-        if (err) console.log(err)
-        let cards = await crud.getCardsByFilter({filter: args.filter, search: args.search});
-        event.sender.send("cards-returned", cards);
-      } else {
-        console.log("Loaded from db!");
-        event.sender.send("cards-returned", docs);
-      }
-    })
-  }
-
-  ipcMain.on("store-sets", async (event) => {
-    saveSets(event, "sets-stored")
-  });
-
-  ipcMain.on("get-sets", async (event) => {
-    getSets(event, "sets-returned")
-  })
-
-  ipcMain.on("store-cards", async (event) => {
-    saveCards(event, "cards-stored");
-  })
-
-  ipcMain.on("get-cards", async (event, args) => {
-    searchCards(event, args)
-  })
-
-  ipcMain.on("clear-cards", async (event) => {
-    console.log("Received clear command")
-    db.cards.remove({}, { multi: true }, function (err, numRemoved) {
-      event.sender.send("cards-cleared", numRemoved)
-    });
-  })
+  handleEvents(db);
 });
 
 app.on('activate', () => {

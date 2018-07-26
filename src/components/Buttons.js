@@ -7,18 +7,32 @@ export class SyncButton extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {loading: false, loadingText: ""}
         this.getData = this.getData.bind(this);
     }
 
     getData() {
+        this.setState({loading: true})
         ipcRenderer.send(`store-${this.props.type}`)
-        ipcRenderer.once(`${this.props.type}-stored`, (event, args) => {
-            console.log(args);
+        ipcRenderer.on(`next-${this.props.type}-returned`, (event, args) => {
+            console.log("Setting text")
+            this.setState({loadingText: args})
+        })
+        ipcRenderer.on(`${this.props.type}-stored`, (event, args) => {
+            this.setState({loading: false})
         })
     }
 
     render() {
-        return <Button bsSize="xsmall" onClick={this.getData}>Sync {this.props.type[0].toUpperCase() + this.props.type.substring(1)}</Button>
+        let buttonText;
+
+        if (this.state.loading) {
+            buttonText = this.state.loadingText || "Loading";
+        } else {
+            buttonText = `Sync ${this.props.type[0].toUpperCase() + this.props.type.substring(1)}`;
+        }
+
+        return <Button bsSize="xsmall" onClick={this.getData}>{buttonText}</Button>
     }
 }
 
@@ -31,7 +45,7 @@ export class ClearButton extends React.Component {
 
     clearData() {
         ipcRenderer.send(`clear-cards`)
-        ipcRenderer.once(`cards-cleared`, (event, args) => {
+        ipcRenderer.on(`cards-cleared`, (event, args) => {
             console.log(args);
         })
     }

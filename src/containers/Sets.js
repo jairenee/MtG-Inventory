@@ -1,12 +1,12 @@
 import Sets from "../components/Sets"
 import { connect } from 'react-redux'
 
-let mapStatetoProps = state => ({
-    initialData: state.sets.initialData,
-    data: state.sets.data,
-    filter: state.sets.filter,
-    filterText: state.sets.filterText,
-    setsList: state.sets.setsList
-})
+let mapStatetoProps = state => {
+    let props = {}
+    Object.keys(state.cards).map(key => {
+        props[key] = state.sets[key];
+    })
+    return props
+}
 
 export default connect(mapStatetoProps)(Sets);
