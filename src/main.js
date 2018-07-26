@@ -1,4 +1,5 @@
-const {app, BrowserWindow, ipcMain} = require('electron'),
+const { app, BrowserWindow, ipcMain } = require('electron'),
+      { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer'),
       Store = require('electron-store');
       store = new Store({
         defaults: {
@@ -19,11 +20,11 @@ const {app, BrowserWindow, ipcMain} = require('electron'),
 
 let db = {};
 
+let win = null;
+
 if (tools) {
   require("electron-debug")();
 }
-
-let win = null;
 
 function createWindow() {
   // Initialize the window to our specified dimensions
@@ -32,6 +33,11 @@ function createWindow() {
 
   function saveWindowBounds() {
     store.set('windowBounds', win.getBounds());
+  }
+
+  if (tools) {
+    installExtension(REACT_DEVELOPER_TOOLS);
+    installExtension(REDUX_DEVTOOLS);
   }
 
   // listen to `resize` and `move` and save the settings

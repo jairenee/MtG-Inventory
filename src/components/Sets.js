@@ -8,7 +8,6 @@ let setMounted = false;
 export default class Sets extends React.Component {
     constructor(props) {
         super(props)
-        console.log("Creating sets")
 
         this.filterListState = new React.createRef();
         this.setsListState = new React.createRef();

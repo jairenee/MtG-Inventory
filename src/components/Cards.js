@@ -27,7 +27,6 @@ export default class Cards extends React.Component {
         let filter = this.props.filter.toLowerCase();
         ipcRenderer.send("get-cards", {search: this.props.search, filter: filter})
         ipcRenderer.once("cards-returned", (event, list) => {
-            console.log("Returned")
             this.props.dispatch({type: "handleSearch", sets: list, loading: false});
         });
     }
