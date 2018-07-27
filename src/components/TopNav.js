@@ -25,6 +25,12 @@ export class TopNav extends React.Component {
               <LinkContainer to="/cards">
                 <NavItem>Cards</NavItem>
               </LinkContainer>
+              <LinkContainer to="/inventory">
+                <NavItem>Inventory</NavItem>
+              </LinkContainer>
+              <LinkContainer to="/decks">
+                <NavItem>Decks</NavItem>
+              </LinkContainer>
             </Nav>
             <Nav pullRight>
               <NavItem>

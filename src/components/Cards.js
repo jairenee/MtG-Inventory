@@ -2,6 +2,8 @@ import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next'
 import { Filter } from './Filter'
 import columns from "./constants/cards"
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import '../../node_modules/react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
 const ipcRenderer = window.require("electron").ipcRenderer;
 
@@ -24,12 +26,16 @@ export default class Cards extends React.Component {
     // That will need caching. Decided to use NeDB for now.
     async getAndFilter(event){
         if (event) event.preventDefault();
-        this.props.dispatch({type: "setLoading", loading: true})
-        let filter = this.props.filter.toLowerCase();
-        ipcRenderer.send("get-cards", {search: this.props.search, filter: filter})
-        ipcRenderer.once("cards-returned", (event, list) => {
-            this.props.dispatch({type: "handleSearch", sets: list, loading: false});
-        });
+        if (this.props.search) {
+            this.props.dispatch({type: "setLoading"})
+            let filter = this.props.filter.toLowerCase();
+            ipcRenderer.send("get-cards", {search: this.props.search, filter: filter})
+            ipcRenderer.once("cards-returned", (event, list) => {
+                this.props.dispatch({type: "handleSearch", sets: list});
+            });
+        } else {
+            this.props.dispatch({type: "dontEven", donteven: true})
+        }
     }
     
     // Handling the dropdown's filter state
@@ -43,16 +49,42 @@ export default class Cards extends React.Component {
                 }
             });
     }
+
+    componentDidMount() {
+        this.searchState.current.focus()
+    }
     
     render() {
         let results;
 
-        if (this.props.data && !this.props.loading) {
+        if (this.props.donteven) {
             results = (
-                <div className="results">
-                    <BootstrapTable keyField="id" data={this.props.data} columns={columns} bordered={false}></BootstrapTable>
-                </div>
+                <center> 
+                    <h3>Please don't break my program. That's a lot you're requesting</h3>
+                    <p>Put some text in the search filter before hitting "Go!"</p>
+                </center>
             )
+        } else if (this.props.data && !this.props.loading) {
+            if (this.props.data.length) {
+                results = (
+                    <div className="results">
+                        <BootstrapTable keyField="id" 
+                                        data={this.props.data} 
+                                        columns={columns} 
+                                        bordered={false}
+                                        pagination={paginationFactory({
+                                            showTotal: true
+                                        })}>
+                        </BootstrapTable>
+                    </div>
+                )
+            } else {
+                results = (
+                    <div className="results">
+                        <center><h3>No results found.</h3></center>
+                    </div>
+                )
+            }
         } else if (this.props.loading) {
             results = (
                 <div className="row">

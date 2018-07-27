@@ -1,4 +1,4 @@
-const { saveSets, getSets, saveCards, searchCards } = require("./helpers"),
+const { saveSets, getSets, saveCards, searchCards, getBackSide } = require("./helpers"),
       { ipcMain } = require("electron");
 
 module.exports = function(db) {
@@ -23,5 +23,9 @@ module.exports = function(db) {
         db.cards.remove({}, { multi: true }, function (err, numRemoved) {
             event.sender.send("cards-cleared", numRemoved)
         });
+    })
+
+    ipcMain.on("get-back-side", async (event, args) => {
+        getBackSide(event, args);
     })
 }

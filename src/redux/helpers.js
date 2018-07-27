@@ -18,7 +18,6 @@ async function pullSets(db) {
 }
 
 module.exports.saveSets = async function(db, event, emit) {
-    console.log("Storing Sets")
     let sets = await crud.getAllSets();
     sets.sort((a, b) => {
         return new Date(a.release) - new Date(b.release)
@@ -28,7 +27,6 @@ module.exports.saveSets = async function(db, event, emit) {
 }
 
 module.exports.saveCards = async function(db, event, emit) {
-    console.log("Storing Cards");
     let sets = await module.exports.getSets(db);
     for (let set in sets) {
         event.sender.send("next-cards-returned", `Set: ${parseInt(set)+1} of ${sets.length}`)
@@ -48,17 +46,21 @@ module.exports.getSets = async function(db, event, emit) {
 }
 
 module.exports.searchCards = async function(db, event, args) {
-    console.log("Searching")
     db.cards.find({ $where: function () {
-        return this[args.filter].toLowerCase().includes(args.search); 
+        return JSON.stringify(this[args.filter]).replace(/[^0-9a-zA-Z\s]/gi, '').toLowerCase()
+            .includes(JSON.stringify(args.search).replace(/[^0-9a-zA-Z\s]/gi, '').toLowerCase()); 
     } }, async (err, docs) => {
         if (err || docs.length === 0) {
             if (err) console.log(err)
             let cards = await crud.getCardsByFilter({filter: args.filter, search: args.search});
             event.sender.send("cards-returned", cards);
         } else {
-            console.log("Loaded from db!");
             event.sender.send("cards-returned", docs);
         }
     })
+}
+
+module.exports.getBackSide = async function(event, args) {
+    let imageUrl = await crud.getBackSide(args.set, args.number);
+    event.sender.send(`back-side-${args.number}`, imageUrl);
 }

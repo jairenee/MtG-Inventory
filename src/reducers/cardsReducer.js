@@ -7,10 +7,15 @@ const
         filter: "Name",
         search: null,
         loading: false,
-        updateView: false
+        updateView: false,
+        donteven: false
     }, 
     cardsReducer = (state = setState, action) => {
         switch(action.type) {
+            case "dontEven":
+            return update(state, {
+                donteven: {$set: true}
+            })
             case "updateSearch":
             return update(state, {
                 search: {$set: action.search}
@@ -18,11 +23,12 @@ const
             case "handleSearch":
             return update(state, {
                 data: {$set: action.sets},
-                loading: {$set: action.loading}
+                loading: {$set: false}
             })
             case "setLoading":
             return update(state, {
-                loading: {$set: action.loading}
+                loading: {$set: true},
+                donteven: {$set: false}
             })
             case "setCardsFilter":
             return update(state, {

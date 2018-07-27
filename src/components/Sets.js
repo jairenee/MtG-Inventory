@@ -1,6 +1,6 @@
 import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next'
-import { FilterList, Filter, SetList } from './Filter'
+import { Filter, SetList } from './Filter'
 import columns from "./constants/sets"
 
 const ipcRenderer = window.require("electron").ipcRenderer;
@@ -79,6 +79,7 @@ export default class Sets extends React.Component {
             })
             setMounted = true;
         }
+        this.filterListState.current.focus();
     }
   
     render() {
@@ -108,6 +109,7 @@ export default class Sets extends React.Component {
             )
         }
 
+        // TODO: Change to FilterList
         return (
             <div className="filter-list col-sm-10 col-sm-offset-1">
                 <Filter

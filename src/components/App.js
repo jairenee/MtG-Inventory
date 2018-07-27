@@ -11,6 +11,8 @@ export default class App extends React.Component {
                 <Route exact path="/" component={Home}/>
                 <Route path="/sets" component={Sets}/>
                 <Route path="/cards" component={Cards}/>
+                <Route path="/inventory"/>
+                <Route path="/decks"/>
             </div>
         </BrowserRouter>
       )
