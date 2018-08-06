@@ -5,6 +5,7 @@
   "main": "./src/main.js",
   "dependencies": {
     "aphrodite": "^2.2.2",
+    "aws-sdk": "^2.284.1",
     "electron-context-menu": "^0.10.0",
     "electron-store": "^2.0.0",
     "electron-util": "^0.9.0",
